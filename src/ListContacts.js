@@ -13,6 +13,10 @@ class ListContacts extends Component { // 4. Because its state has changed, the 
     query: ''
   }
 
+  clearQuery = (query) => {
+    this.setState({ query: '' })
+  }
+
   updateQuery = (query) => {
     // 3. updateQuery() then calls setState(), merging in the new state to update the component's internal state.
     this.setState({ query: query.trim() })
@@ -25,11 +29,13 @@ class ListContacts extends Component { // 4. Because its state has changed, the 
     const { query } = this.state
 
     let showingContacts
+    // 'truthy'
     if (query) {
       // escape regular expressions and ignore uppercase
       const match = new RegExp(escapeRegExp(query), 'i')
       // filter by contact names
       showingContacts = contacts.filter((contact) => match.test(contact.name))
+      // 'falsey'
     } else {
       showingContacts = contacts
     }
@@ -49,6 +55,14 @@ class ListContacts extends Component { // 4. Because its state has changed, the 
             onChange={(event) => this.updateQuery(event.target.value)}
           />
         </div>
+
+        {showingContacts.length !== contacts.length && (
+          <div className='showing-contacts'>
+            <span>Now showing {showingContacts.length} of {contacts.length} total</span>
+            <button onClick={this.clearQuery}>Show all</button>
+          </div>
+        )}
+
         <ol className='contact-list'>
           {showingContacts.map((contact) => (
             <li key={contact.id} className='contact-list-item'>
