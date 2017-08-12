@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Route } from 'react-router-dom'
 import ListContacts from './ListContacts'
 import CreateContact from './CreateContact'
 import * as ContactsAPI from './utils/ContactsAPI'
@@ -8,7 +9,6 @@ import * as ContactsAPI from './utils/ContactsAPI'
 
 class App extends Component {
   state = {
-    screen: 'list', // list, create
     contacts: []
   }
   // Add a lifecycle event to retrieve contacts from the API
@@ -31,21 +31,33 @@ class App extends Component {
     // Remove contact for the api
     ContactsAPI.remove(contact)
   }
+
+  CreateContact(contact) {
+    ContactsAPI.create(contact).then(contact => {
+      this.setState(state => ({
+        // use concat combine arrays into new array, add new contact to existing contacts
+        contacts: state.contacts.concat([ contact ])
+      }))
+    })
+  }
+
   render() {
     return (
        <div className="app">
-         {this.state.screen === 'list' && (
+         <Route exact path="/" render={() => (
            <ListContacts
              onDeleteContact={this.removeContact}
              contacts={this.state.contacts}
-             onNavigate={() => {
-               this.setState({ screen: 'create' })
+           />
+         )}/>
+         <Route path="/create" render={( { history }) => (
+           <CreateContact
+             onCreateContact={(contact) => {
+               this.CreateContact(contact)
+               history.push('/')
              }}
            />
-         )}
-         {this.state.screen === 'create' && (
-           <CreateContact/>
-         )}
+         )}/>
        </div>
      )
   }
