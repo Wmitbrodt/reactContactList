@@ -1,31 +1,21 @@
 import React, { Component } from 'react';
 import ListContacts from './ListContacts';
+import * as ContactsAPI from './utils/ContactsAPI'
 
 
 
 
 class App extends Component {
   state = {
-    contacts: [
-      {
-        "id": "ryan",
-        "name": "Ryan Florence",
-        "email": "ryan@reacttraining.com",
-        "avatarURL": "http://localhost:5001/ryan.jpg"
-      },
-      {
-        "id": "michael",
-        "name": "Michael Jackson",
-        "email": "michael@reacttraining.com",
-        "avatarURL": "http://localhost:5001/michael.jpg"
-      },
-      {
-        "id": "tyler",
-        "name": "Tyler McGinnis",
-        "email": "tyler@reacttraining.com",
-        "avatarURL": "http://localhost:5001/tyler.jpg"
-      }
-    ]
+    contacts: []
+  }
+  // Add a lifecycle event to retrieve contacts from the API
+  componentDidMount(){
+    // when the Component mounts, we make an API request
+    // when that api request gets resolved, we get the contacts and update the state
+    ContactsAPI.getAll().then((contacts) => {
+      this.setState({ contacts })
+    })
   }
   // when removeContact is invoked, it's going to be passed the specific contact that was clicked on
   removeContact = (contact) => {
