@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import ListContacts from './ListContacts';
+import React, { Component } from 'react'
+import ListContacts from './ListContacts'
+import CreateContact from './CreateContact'
 import * as ContactsAPI from './utils/ContactsAPI'
 
 
@@ -7,6 +8,7 @@ import * as ContactsAPI from './utils/ContactsAPI'
 
 class App extends Component {
   state = {
+    screen: 'list', // list, create
     contacts: []
   }
   // Add a lifecycle event to retrieve contacts from the API
@@ -25,14 +27,25 @@ class App extends Component {
       contacts: state.contacts.filter((c) => c.id !== contact.id)
       // will return a new contacts array, with the specific contact that was clicked on filtered out
     }))
+
+    // Remove contact for the api
+    ContactsAPI.remove(contact)
   }
   render() {
     return (
-       <div>
-         <ListContacts
-           onDeleteContact={this.removeContact}
-           contacts={this.state.contacts}
-         />
+       <div className="app">
+         {this.state.screen === 'list' && (
+           <ListContacts
+             onDeleteContact={this.removeContact}
+             contacts={this.state.contacts}
+             onNavigate={() => {
+               this.setState({ screen: 'create' })
+             }}
+           />
+         )}
+         {this.state.screen === 'create' && (
+           <CreateContact/>
+         )}
        </div>
      )
   }
